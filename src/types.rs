@@ -376,6 +376,29 @@ impl<N: Name> Type<N> {
             _ => None,
         }
     }
+    /// If the type is an arrow, recursively get all curried function arguments.
+    pub fn args_destruct(self) -> Option<Vec<Type<N>>> {
+        match self {
+            Type::Constructed(n, mut args) if n.is_arrow() => {
+                let mut tps = Vec::with_capacity(1);
+                args.reverse();
+                tps.push(args.pop().unwrap());
+                let mut tp = args.pop().unwrap();
+                loop {
+                    match tp {
+                        Type::Constructed(n, mut args) if n.is_arrow() => {
+                            args.reverse();
+                            tps.push(args.pop().unwrap());
+                            tp = args.pop().unwrap();
+                        }
+                        _ => break,
+                    }
+                }
+                Some(tps)
+            }
+            _ => None,
+        }
+    }
     /// If the type is an arrow, get its ultimate return type.
     ///
     /// # Examples

@@ -87,7 +87,7 @@ impl<N: Name> Context<N> {
     pub fn clean(&mut self) {
         self.substitution = IndexMap::new();
     }
-    /// Removes the previous `n` substitutions added to the `Context`.
+    /// Removes all but `n` substitutions added to the `Context`.
     pub fn rollback(&mut self, n: usize) {
         if n == 0 {
             self.clean()
@@ -228,7 +228,7 @@ impl<N: Name> Context<N> {
                 if t2.occurs(v) {
                     Err(UnificationError::Occurs(v))
                 } else {
-                    self.extend(v, t2.clone());
+                    self.extend(v, t2);
                     Ok(())
                 }
             }
@@ -236,7 +236,7 @@ impl<N: Name> Context<N> {
                 if t1.occurs(v) {
                     Err(UnificationError::Occurs(v))
                 } else {
-                    self.extend(v, t1.clone());
+                    self.extend(v, t1);
                     Ok(())
                 }
             }
