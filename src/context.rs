@@ -88,11 +88,11 @@ impl<N: Name> Context<N> {
     /// ```
     pub fn clean(&mut self) {
         self.substitution.clear();
-        self.cache.clear();
+        self.cache = HashMap::new();
     }
     /// Removes all but `n` substitutions added to the `Context`.
     pub fn rollback(&mut self, n: usize) {
-        self.cache.clear();
+        self.cache = HashMap::new();
         if n == 0 {
             self.clean()
         } else {
