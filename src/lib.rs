@@ -99,12 +99,16 @@
 //! [`TypeSchema`]: enum.TypeSchema.html
 //! [Hindley-Milner polymorphic typing system]: https://en.wikipedia.org/wiki/Hindley–Milner_type_system
 
+pub mod atype;
 mod context;
 mod macros;
 mod parser;
+mod source;
 mod types;
 
 pub use context::{Context, ContextChange, UnificationError};
+pub use source::Source;
+use std::hash::Hash;
 pub use types::{Type, TypeSchema, Variable};
 
 /// Types require a `Name` for comparison.
@@ -126,7 +130,7 @@ pub use types::{Type, TypeSchema, Variable};
 ///
 /// ```
 /// # use polytype::{Type, Name};
-/// #[derive(Clone, PartialEq, Eq)]
+/// #[derive(Clone, PartialEq, Eq, Hash)]
 /// struct N(u8);
 ///
 /// impl Name for N {
@@ -140,7 +144,7 @@ pub use types::{Type, TypeSchema, Variable};
 /// ```
 ///
 /// [`arrow`]: #tymethod.arrow
-pub trait Name: Clone + Eq {
+pub trait Name: Clone + Eq + Hash {
     /// A specific name representing an arrow must be declared.
     fn arrow() -> Self;
     /// A way of displaying the name.

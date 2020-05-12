@@ -236,7 +236,7 @@ fn test_unify_both_sides_polymorphic_occurs() {
 
 #[test]
 fn test_unify_nonstring_name() {
-    #[derive(Debug, Clone, PartialEq, Eq)]
+    #[derive(Debug, Clone, PartialEq, Eq, Hash)]
     struct N(u32);
     impl Name for N {
         fn arrow() -> Self {
