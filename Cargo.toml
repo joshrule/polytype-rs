@@ -13,6 +13,7 @@ categories = ["science", "data-structures", "algorithms"]
 edition = "2018"
 
 [dependencies]
+fnv = "1.0"
 indexmap = "1.0"
 itertools = "0.8"
 nom = "=4.1.1"

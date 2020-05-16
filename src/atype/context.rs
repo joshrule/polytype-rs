@@ -2,19 +2,21 @@ use crate::{
     atype::{Schema, Ty, Type, TypeSchema, Variable},
     Name,
 };
+use fnv::FnvHashMap;
 use itertools::Itertools;
-use std::{borrow::Borrow, cell::RefCell, collections::HashMap, hash::Hash};
+use std::{borrow::Borrow, cell::RefCell, hash::Hash};
 use typed_arena::Arena;
 
-// TODO: Convert Interner to FNV Hash.
-struct Interner<'a, K>(RefCell<HashMap<&'a K, ()>>);
+struct Interner<'a, K>(RefCell<FnvHashMap<&'a K, ()>>);
 
-// TODO: Convert SliceInterner to FNV Hash.
-struct SliceInterner<'a, K>(RefCell<HashMap<&'a [K], ()>>);
+struct SliceInterner<'a, K>(RefCell<FnvHashMap<&'a [K], ()>>);
 
 impl<'a, K: Eq + Hash> Interner<'a, K> {
     fn with_capacity(n: usize) -> Self {
-        Interner(RefCell::new(HashMap::with_capacity(n)))
+        Interner(RefCell::new(FnvHashMap::with_capacity_and_hasher(
+            n,
+            Default::default(),
+        )))
     }
     pub fn intern<Q>(&self, value: K, make: impl FnOnce(K) -> &'a K) -> &'a K
     where
@@ -35,13 +37,16 @@ impl<'a, K: Eq + Hash> Interner<'a, K> {
 
 impl<'a, K> Default for Interner<'a, K> {
     fn default() -> Self {
-        Interner(RefCell::new(HashMap::new()))
+        Interner(RefCell::new(FnvHashMap::default()))
     }
 }
 
 impl<'a, K: Eq + Hash> SliceInterner<'a, K> {
     pub fn with_capacity(n: usize) -> Self {
-        SliceInterner(RefCell::new(HashMap::with_capacity(n)))
+        SliceInterner(RefCell::new(FnvHashMap::with_capacity_and_hasher(
+            n,
+            Default::default(),
+        )))
     }
     pub fn intern(&self, value: &[K], make: impl FnOnce(&[K]) -> &'a [K]) -> &'a [K] {
         let mut table = self.0.borrow_mut();
@@ -59,7 +64,7 @@ impl<'a, K: Eq + Hash> SliceInterner<'a, K> {
 
 impl<'a, K> Default for SliceInterner<'a, K> {
     fn default() -> Self {
-        SliceInterner(RefCell::new(HashMap::new()))
+        SliceInterner(RefCell::new(FnvHashMap::default()))
     }
 }
 
