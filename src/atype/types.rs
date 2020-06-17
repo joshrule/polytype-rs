@@ -416,6 +416,7 @@ impl<'ctx, N: Name> Type<'ctx, N> {
         let mut sub = Substitution::with_capacity(ctx.clone(), 32);
         Type::unify_with_sub(cs, &mut sub).map(|_| sub)
     }
+    /// Unify a set of constraints subject to an existing `Substitution`.
     pub fn unify_with_sub(
         initial_cs: &[(Ty<'ctx, N>, Ty<'ctx, N>)],
         sub: &mut Substitution<'ctx, N>,
@@ -437,19 +438,8 @@ impl<'ctx, N: Name> Type<'ctx, N> {
         cs: &mut SmallVec<[(Ty<'ctx, N>, Ty<'ctx, N>); 32]>,
         subs: &mut Substitution<'ctx, N>,
     ) -> Result<(), UnificationError<'ctx, N>> {
-        while let Type::Variable(v) = *s {
-            match subs.iter().find(|(k_var, _)| *k_var == v) {
-                Some((_, v_term)) => s = v_term,
-                None => break,
-            }
-        }
-
-        while let Type::Variable(v) = *t {
-            match subs.iter().find(|(k_var, _)| *k_var == v) {
-                Some((_, v_term)) => t = v_term,
-                None => break,
-            }
-        }
+        s = s.apply(subs);
+        t = t.apply(subs);
 
         // if they are equal, you're all done with them.
         if s != t {
