@@ -239,7 +239,11 @@ impl<'ctx, N: Name> Type<'ctx, N> {
         match *self {
             Type::Constructed(name, args) => {
                 let naive_args = args.iter().map(|t| t.apply(sub)).collect_vec();
-                sub.ctx.intern_tcon(name, &naive_args)
+                if naive_args == args {
+                    self
+                } else {
+                    sub.ctx.intern_tcon(name, &naive_args)
+                }
             }
             Type::Variable(v) => sub.get(v).map(|tp| tp.apply(sub)).unwrap_or_else(|| self),
         }
