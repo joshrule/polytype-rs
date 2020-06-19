@@ -129,7 +129,7 @@ impl<'ctx, N: Name> TypeContext<'ctx, N> {
     }
     pub(crate) fn intern_args(&self, args: &[Ty<'ctx, N>]) -> &'ctx [Ty<'ctx, N>] {
         self.ctx.arg_map.intern(args, |args| {
-            self.ctx.arg_arena.alloc_extend(args.iter().map(|x| *x))
+            self.ctx.arg_arena.alloc_extend(args.iter().copied())
         })
     }
     pub fn intern_tcon(&self, head: &'ctx N, args: &[Ty<'ctx, N>]) -> Ty<'ctx, N> {
@@ -146,7 +146,7 @@ impl<'ctx, N: Name> TypeContext<'ctx, N> {
     pub fn arrow_slice(&self, tps: &[Ty<'ctx, N>]) -> Ty<'ctx, N> {
         tps.iter()
             .rev()
-            .map(|x| *x)
+            .copied()
             .fold1(|x, y| self.arrow(y, x))
             .unwrap_or_else(|| panic!("cannot create a type from nothing"))
     }

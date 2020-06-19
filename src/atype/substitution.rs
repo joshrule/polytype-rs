@@ -30,7 +30,7 @@ impl<'ctx, N: Name> Substitution<'ctx, N> {
         self.sub.iter().find(|(k, _)| *k == q).map(|(_, v)| *v)
     }
     pub fn add(&mut self, k: Variable, v: Ty<'ctx, N>) -> bool {
-        if self.sub.iter().find(|(j, _)| k == *j).is_some() {
+        if self.sub.iter().any(|(j, _)| k == *j) {
             false
         } else {
             self.sub.push((k, v));

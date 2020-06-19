@@ -436,7 +436,7 @@ impl<'ctx, N: Name> Type<'ctx, N> {
     }
     /// the internal implementation of a single unification.
     #[inline]
-    fn unify_one<'a>(
+    fn unify_one(
         mut s: Ty<'ctx, N>,
         mut t: Ty<'ctx, N>,
         cs: &mut SmallVec<[(Ty<'ctx, N>, Ty<'ctx, N>); 32]>,
