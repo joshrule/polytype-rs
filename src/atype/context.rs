@@ -4,7 +4,11 @@ use crate::{
 };
 use fnv::FnvHashMap;
 use itertools::Itertools;
-use std::{borrow::Borrow, cell::RefCell, hash::Hash};
+use std::{
+    borrow::Borrow,
+    cell::RefCell,
+    hash::{Hash, Hasher},
+};
 use typed_arena::Arena;
 
 struct Interner<'a, K>(RefCell<FnvHashMap<&'a K, ()>>);
@@ -90,6 +94,12 @@ impl<'ctx, N: Name> Eq for TypeContext<'ctx, N> {}
 impl<'ctx, N: Name> Clone for TypeContext<'ctx, N> {
     fn clone(&self) -> Self {
         TypeContext { ctx: self.ctx }
+    }
+}
+
+impl<'ctx, N: Name> Hash for TypeContext<'ctx, N> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        (self.ctx as *const Context<'ctx, N>).hash(state)
     }
 }
 

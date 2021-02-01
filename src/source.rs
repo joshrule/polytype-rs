@@ -4,7 +4,7 @@ use crate::{
 };
 
 /// A way to generate fresh `Variable`s.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Source(pub(crate) usize);
 
 /// Allow types to be reified for use under a different `Source`.
